@@ -33,18 +33,18 @@ import com.example.movieappmad23.models.getMovies
 import com.example.movieappmad23.ui.theme.MovieAppMAD23Theme
 import com.example.movieappmad23.ui.theme.Shapes
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() { // Hauptaktivität erben von ComponentActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
+        setContent { // UI-Inhalte festlegen
             MovieAppMAD23Theme {
                 Scaffold(topBar = {
                     SimpleTopAppBar()
                 }) { padding ->
-                    val movies = getMovies()
+                    val movies = getMovies() // Filme aus der Funktion holen
                     MovieList(
                         modifier = Modifier.padding(padding),
-                        movies = movies
+                        movies = movies// Filme an die Liste übergeben
                     )
                 }
             }
@@ -58,17 +58,17 @@ fun SimpleTopAppBar(){
 
     TopAppBar(
         title = { Text("Movies") },
-        actions = {
+        actions = {   // Aktionen innerhalb der AppBar
             IconButton(onClick = { showMenu = !showMenu }) {
                 Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More")
             }
             DropdownMenu(
                 expanded = showMenu,
-                onDismissRequest = { showMenu = false }
+                onDismissRequest = { showMenu = false } // Menü schließen, wenn außerhalb geklickt wird
             ) {
                 DropdownMenuItem(onClick = { println("Favs clicked") }) {
-                    Row {
-                        Icon(imageVector = Icons.Default.Favorite, contentDescription = "Favorites", modifier = Modifier.padding(4.dp))
+                    Row {// Zeile für Icon und Text
+                        Icon(imageVector = Icons.Default.Favorite, contentDescription = "Favorites", modifier = Modifier.padding(4.dp)) // Icon für Favoriten
                         Text(text = "Favorites", modifier = Modifier
                             .width(100.dp)
                             .padding(4.dp))
@@ -87,57 +87,57 @@ fun MovieList(modifier: Modifier = Modifier, movies: List<Movie> = getMovies()) 
         contentPadding = PaddingValues(all = 12.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(movies) { movie ->
-            MovieRow(movie)
+        items(movies) { movie -> // Elemente der Liste
+            MovieRow(movie) // Filmzeile erstellen
         }
     }
 }
 
 @Composable
-fun MovieImage(imageUrl: String) {
-    SubcomposeAsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
+fun MovieImage(imageUrl: String) { // Funktion für Vorschaubild
+    SubcomposeAsyncImage( // Verwendung von SubcomposeAsyncImage zum asynchronen Laden von Bildern
+        model = ImageRequest.Builder(LocalContext.current) // ImageRequest erstellen
             .data(imageUrl)
             .crossfade(true)
             .build(),
         contentScale = ContentScale.Crop,
-        contentDescription = stringResource(id = R.string.movie_poster),
+        contentDescription = stringResource(id = R.string.movie_poster), // Lädt Text aus der Ressourcendatei um Inhalte vom Bild auch Menschen mit Behinderung zu vermitteln
         loading = {
-            CircularProgressIndicator()
+            CircularProgressIndicator()// Ladeanzeige anzeigen, während das Bild geladen wird
         }
     )
 }
 
 @Composable
-fun FavoriteIcon() {
+fun FavoriteIcon() { // Funktion zur Erstellung des Favoriten-Icons
     Box(modifier = Modifier
-        .fillMaxSize()
+        .fillMaxSize() // Füllen des verfügbaren Platzes
         .padding(10.dp),
-        contentAlignment = Alignment.TopEnd
+        contentAlignment = Alignment.TopEnd // Ausrichtung oben rechts
     ){
         Icon(
-            tint = MaterialTheme.colors.secondary,
-            imageVector = Icons.Default.FavoriteBorder,
-            contentDescription = "Add to favorites")
+            tint = MaterialTheme.colors.secondary, // Farbe des Icons
+            imageVector = Icons.Default.FavoriteBorder, // Verwenden des Herz-Icons
+            contentDescription = "Add to favorites") // Beschreibung des Inhalts für Barrierefreiheit
     }
 }
 @Preview
 @Composable
-fun MovieRow(movie: Movie = getMovies()[0]) {
+fun MovieRow(movie: Movie = getMovies()[0]) { // Funktion zur Erstellung einer Filmzeile
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(5.dp),
-        shape = Shapes.large,
-        elevation = 10.dp
+        shape = Shapes.large, // Runde Ecken für die Card
+        elevation = 10.dp // Schattierung für die Karte
     ) {
-        Column {
+        Column {// Spalte für die Inhalte der Karte
             Box(modifier = Modifier
                 .height(150.dp)
                 .fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center // Inhalt zentrieren
             ) {
-                MovieImage(imageUrl = movie.images[0])
-                FavoriteIcon()
+                MovieImage(imageUrl = movie.images[0])// Filmbild anzeigen
+                FavoriteIcon() //Favoriten Herzal anzeigen
             }
 
             MovieDetails(modifier = Modifier.padding(12.dp), movie = movie)
@@ -146,13 +146,13 @@ fun MovieRow(movie: Movie = getMovies()[0]) {
 }
 
 @Composable
-fun MovieDetails(modifier: Modifier = Modifier, movie: Movie) {
+fun MovieDetails(modifier: Modifier = Modifier, movie: Movie) { // Funktion zur Anzeige von Filmdetails
 
     var expanded by remember {
-        mutableStateOf(false)
+        mutableStateOf(false) // Zustand für Anzeigen/Verbergen details
     }
 
-    Row(
+    Row( // Zeile für den Titel und den Aufklapp-Pfeil
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -162,41 +162,41 @@ fun MovieDetails(modifier: Modifier = Modifier, movie: Movie) {
             style = MaterialTheme.typography.h6
         )
 
-        IconButton(
+        IconButton( // Schaltfläche für den Pfeil
             modifier = Modifier.weight(1f),
             onClick = { expanded = !expanded }) {
             Icon(imageVector =
-                if (expanded) Icons.Filled.KeyboardArrowDown
-                else Icons.Filled.KeyboardArrowUp,
-                    contentDescription = "expand",
-                    modifier = Modifier
-                        .size(25.dp),
-                    tint = Color.DarkGray
+            if (expanded) Icons.Filled.KeyboardArrowDown
+            else Icons.Filled.KeyboardArrowUp,
+                contentDescription = "expand",
+                modifier = Modifier
+                    .size(25.dp), // Größe des Icons auf 25.dp setzen
+                tint = Color.DarkGray
             )
         }
 
     }
 
-    AnimatedVisibility(
+    AnimatedVisibility( // Eine animierte Sichtbarkeit, um die Details sanft ein- und auszublenden
         visible = expanded,
         enter = fadeIn(),
         exit = fadeOut()
     ) {
-        Column (modifier = modifier) {
-            Text(text = "Director: ${movie.director}", style = MaterialTheme.typography.caption)
-            Text(text = "Released: ${movie.year}", style = MaterialTheme.typography.caption)
+        Column (modifier = modifier) { // Eine Spalte für die Filmdetails
+            Text(text = "Regisseur: ${movie.director}", style = MaterialTheme.typography.caption)
+            Text(text = "Erscheinungsjahr: ${movie.year}", style = MaterialTheme.typography.caption)
             Text(text = "Genre: ${movie.genre}", style = MaterialTheme.typography.caption)
-            Text(text = "Actors: ${movie.actors}", style = MaterialTheme.typography.caption)
-            Text(text = "Rating: ${movie.rating}", style = MaterialTheme.typography.caption)
+            Text(text = "Schauspieler: ${movie.actors}", style = MaterialTheme.typography.caption)
+            Text(text = "Bewertung: ${movie.rating}", style = MaterialTheme.typography.caption)
 
-            Divider(modifier = Modifier.padding(3.dp))
+            Divider(modifier = Modifier.padding(3.dp)) // Trennlinie
 
-            Text(buildAnnotatedString {
+            Text(buildAnnotatedString { // AnnotatedString zum Kombinieren von unterschiedlichen Stilen im Text
                 withStyle(style = SpanStyle(color = Color.DarkGray, fontSize = 13.sp)) {
-                    append("Plot: ")
+                    append("Handlung: ") // Füge den Text "Handlung: " mit einem dunkelgrauen Stil hinzu
                 }
                 withStyle(style = SpanStyle(color = Color.DarkGray, fontSize = 13.sp, fontWeight = FontWeight.Light)){
-                    append(movie.plot)
+                    append(movie.plot) // Füge die Handlung des Films hinhz
                 }
             })
         }
