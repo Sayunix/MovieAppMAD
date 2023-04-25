@@ -11,3 +11,5 @@ sealed class Screen (val route: String) {
     object FavoriteScreen : Screen("favorite")
 
 }
+
+//Sealed Class = Zentralisation der routendefinition
